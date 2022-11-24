@@ -1,0 +1,18 @@
+plugins {
+    id 'application'
+}
+
+archivesBaseName = project.archives_base_name
+version = project.version
+group = project.maven_group
+
+application {
+    mainClass = "io.github.oakdh.prometheus.Main"
+    mainModule = "io.github.oakdh.prometheus"
+}
+
+jar {
+    manifest {
+        attributes 'Main-Class': 'io.github.oakdh.prometheus.Main'
+    }
+}
