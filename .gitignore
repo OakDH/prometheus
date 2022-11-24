@@ -10,3 +10,6 @@ bin
 # CERTS
 *.jks
 *.cer
+
+.DH_Store
+*.db
