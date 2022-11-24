@@ -10,6 +10,14 @@ import java.net.Socket;
 
 public class Main
 {
+    
+    public static String outputMessage(String message)
+    {
+        int messageLength = message.length();
+        
+        return String.format("HTTP/1.1 200\r\nContent-Type: application/json\r\nContent-Length: %d\r\n\r\n%s\r\n", messageLength, message);
+    }
+
     public static void main(String[] args)
     {
         try
@@ -34,10 +42,10 @@ public class Main
 
                     if (line.trim().isEmpty()) break;
                 }
-                
-                System.out.print(message);
 
-                ouWriter.print("HTTP/1.1 200\r\nContent-Type: application/json\r\nContent-Length: 30\r\n\r\n{\"Message\":\"Helloo from oak!\"}\r\n");
+                
+                
+                ouWriter.print(outputMessage("Hello from oak!\n"));
                 ouWriter.flush();
             }
         }
