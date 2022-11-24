@@ -20,6 +20,9 @@ public class Main
 
     public static void main(String[] args)
     {
+        if (!DatabaseHandler.connectDatabase()) return;
+
+
         try
         {
             ServerSocket ss = new ServerSocket(1025);
