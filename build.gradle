@@ -2,6 +2,10 @@ plugins {
     id 'application'
 }
 
+repositories {
+    mavenCentral()
+}
+
 archivesBaseName = project.archives_base_name
 version = project.version
 group = project.maven_group
@@ -9,6 +13,10 @@ group = project.maven_group
 application {
     mainClass = "io.github.oakdh.prometheus.Main"
     mainModule = "io.github.oakdh.prometheus"
+}
+
+dependencies {
+    implementation 'org.xerial:sqlite-jdbc:3.40.0.0'
 }
 
 jar {
