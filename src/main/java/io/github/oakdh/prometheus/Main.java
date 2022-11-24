@@ -11,6 +11,13 @@ import java.net.Socket;
 public class Main
 {
     
+    public static String outputMessage(String message)
+    {
+        int messageLength = message.length()-1;
+        
+        return String.format("HTTP/1.1 200\r\nContent-Type: application/json\r\nContent-Length: %d\r\n\r\n%s\r\n", messageLength, message);
+    }
+
     public static void main(String[] args)
     {
         try
@@ -35,9 +42,10 @@ public class Main
                     if (line.trim().isEmpty()) break;
                 }
 
-                ouWriter.print("HTTP/1.1 200\r\nContent-Type: application/json\r\nContent-Length: 29\r\n\r\n{\"Message\":\"Hello from oak!\"}\r\n");
                 
-
+                
+                ouWriter.print(outputMessage("Hello from oak!"));
+                ouWriter.flush();
             }
         }
         catch (Exception e)
