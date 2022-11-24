@@ -10,7 +10,6 @@ import java.net.Socket;
 
 public class Main
 {
-    
     public static void main(String[] args)
     {
         try
@@ -26,18 +25,20 @@ public class Main
 
                 OutputStream outStream = con.getOutputStream();
                 PrintWriter ouWriter = new PrintWriter(outStream, true);
-
+                
+                String message = "";
                 String line = null;
                 while ((line = isReader.readLine()) != null)
                 {
-                    System.out.println("Inut : "+line);
+                    message += line + "\n";
 
                     if (line.trim().isEmpty()) break;
                 }
-
-                ouWriter.print("HTTP/1.1 200\r\nContent-Type: application/json\r\nContent-Length: 29\r\n\r\n{\"Message\":\"Hello from oak!\"}\r\n");
                 
+                System.out.print(message);
 
+                ouWriter.print("HTTP/1.1 200\r\nContent-Type: application/json\r\nContent-Length: 30\r\n\r\n{\"Message\":\"Helloo from oak!\"}\r\n");
+                ouWriter.flush();
             }
         }
         catch (Exception e)
