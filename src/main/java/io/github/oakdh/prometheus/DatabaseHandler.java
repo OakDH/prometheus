@@ -6,29 +6,47 @@ public class DatabaseHandler {
     public static Connection database_connection;
 
     /**
-     * Creates a connection between the server and database. Will create the database if it does not exist.
+     * Creates a connection between the server and database. Will create the
+     * database if it does not exist.
      * 
      * @return Whether the connection made or not.
      */
-    public static boolean connectDatabase()
-    {
-        try 
-        {
+    public static boolean connectDatabase() {
+        try {
             Class.forName("org.sqlite.JDBC");
             Class.forName("java.sql.Driver");
             database_connection = DriverManager.getConnection("jdbc:sqlite:./database.db");
 
             Statement statement = database_connection.createStatement();
 
+            /* USER-LOGIN */
+
             statement.execute("CREATE TABLE IF NOT EXISTS \"USER_LOGIN\" (" +
-                "\"id\"            BIG INT            NOT NULL," +
-                "\"username\"      TEXT               NOT NULL," +
-                "\"password\"      TEXT               NOT NULL," +
-                "\"email\"         TEXT               NOT NULL" +
-            ");");
-        }
-        catch (Exception e)
-        {
+                    "\"id\"            BIG INT            NOT NULL," +
+                    "\"username\"      TEXT               NOT NULL," +
+                    "\"password\"      TEXT               NOT NULL," +
+                    "\"email\"         TEXT               NOT NULL" +
+                    ");");
+
+            /* USER-DATA */
+
+            statement.execute("CREATE TABLE IF NOT EXISTS \"USER_DATA\" (" +
+                    "\"id\"                     UNSIGNED BIG INT            DEFAULT 0," +
+                    "\"correct_reports\"        UNSIGNED INTEGER            DEFAULT 0," +
+                    "\"incorrect_reports\"      UNSIGNED INTEGER            DEFAULT 0," +
+                    "\"points\"                 UNSIGNED INTEGER            DEFAULT 0" +
+                    ");");
+
+            /* Measurements */
+
+            statement.execute("CREATE TABLE IF NOT EXISTS \"MEASUREMENTS\" (" +
+                    "\"id\"                 UNSIGNED BIG INT                   NOT NULL," +
+                    "\"humidity\"           NUMERIC                            NOT NULL," +
+                    "\"moisture\"           NUMERIC                            NOT NULL," +
+                    "\"time\"                UNSIGNED BIG INT                   NOT NULL" +
+                    ");");
+
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
@@ -42,12 +60,10 @@ public class DatabaseHandler {
      * @param userLogin Login information.
      * @return Whether the save was successful or not.
      */
-    public static boolean saveUserLogin(UserLogin userLogin)
-    {
+    public static boolean saveUserLogin(UserLogin userLogin) {
         String sql = "INSERT INTO USER_LOGIN(id, username, password, email) VALUES(?, ?, ?, ?)";
 
-        try
-        {
+        try {
             // Create statement
             PreparedStatement pstatement = database_connection.prepareStatement(sql);
 
@@ -58,10 +74,8 @@ public class DatabaseHandler {
             pstatement.setString(4, userLogin.email());
 
             pstatement.executeUpdate();
-        }
-        catch (Exception e) 
-        { 
-            e.printStackTrace(); 
+        } catch (Exception e) {
+            e.printStackTrace();
             return false;
         }
 
@@ -72,33 +86,31 @@ public class DatabaseHandler {
      * Gets the user login information from the database
      * 
      * @param id The id of the user to get
-     * @return Returns a {@link io.github.oakdh.prometheus.UserLogin} filled with the users data if the user was found.
-     * Returns a {@link io.github.oakdh.prometheus.UserLogin#EMPTY} if the user wasn't found.
+     * @return Returns a {@link io.github.oakdh.prometheus.UserLogin} filled with
+     *         the users data if the user was found.
+     *         Returns a {@link io.github.oakdh.prometheus.UserLogin#EMPTY} if the
+     *         user wasn't found.
      */
-    public static UserLogin getUserLogin(long id)
-    {
+    public static UserLogin getUserLogin(long id) {
         String sql = "SELECT username, password, email FROM USER_LOGIN WHERE id = ?";
-        
-        try
-        {
+
+        try {
             // Create statement
             PreparedStatement pstatement = database_connection.prepareStatement(sql);
 
             // Set id in statement
             pstatement.setLong(1, id);
-            
+
             // Execute statement and save the results
             ResultSet rs = pstatement.executeQuery();
 
             // Return userlogin data collected from the result
             return new UserLogin(id, rs.getString("username"), rs.getString("password"), rs.getString("email"));
-        }
-        catch (Exception e)
-        {
+        } catch (Exception e) {
             e.printStackTrace();
             return UserLogin.EMPTY;
         }
     }
 
-    //TODO: put user data, put user login, put measurements  
+    // TODO: put user data, put user login, put measurements
 }
