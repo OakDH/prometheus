@@ -68,5 +68,37 @@ public class DatabaseHandler {
         return true;
     }
 
+    /**
+     * Gets the user login information from the database
+     * 
+     * @param id The id of the user to get
+     * @return Returns a {@link io.github.oakdh.prometheus.UserLogin} filled with the users data if the user was found.
+     * Returns a {@link io.github.oakdh.prometheus.UserLogin#EMPTY} if the user wasn't found.
+     */
+    public static UserLogin getUserLogin(long id)
+    {
+        String sql = "SELECT username, password, email FROM USER_LOGIN WHERE id = ?";
+        
+        try
+        {
+            // Create statement
+            PreparedStatement pstatement = database_connection.prepareStatement(sql);
+
+            // Set id in statement
+            pstatement.setLong(1, id);
+            
+            // Execute statement and save the results
+            ResultSet rs = pstatement.executeQuery();
+
+            // Return userlogin data collected from the result
+            return new UserLogin(id, rs.getString("username"), rs.getString("password"), rs.getString("email"));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return UserLogin.EMPTY;
+        }
+    }
+
     //TODO: put user data, put user login, put measurements  
 }

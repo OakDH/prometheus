@@ -6,4 +6,6 @@ public record UserLogin
     String username,
     String password,
     String email
-) {}
+) {
+    public static UserLogin EMPTY = new UserLogin(-1, null, null, null);
+}
