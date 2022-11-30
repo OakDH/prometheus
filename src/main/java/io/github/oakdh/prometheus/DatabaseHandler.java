@@ -2,8 +2,6 @@ package io.github.oakdh.prometheus;
 
 import java.sql.*;
 
-import org.w3c.dom.UserDataHandler;
-
 public class DatabaseHandler {
     public static Connection database_connection;
 
