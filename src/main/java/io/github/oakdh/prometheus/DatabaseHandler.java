@@ -63,11 +63,6 @@ public class DatabaseHandler {
     public static boolean saveUserLogin(UserLogin userLogin) {
         String sql = "INSERT INTO USER_LOGIN(id, username, password, email) VALUES(?, ?, ?, ?)";
 
-        // String sql = "INSERT INTO USER_DATA(id, correct_reports, incorrect_reports,
-        // points) VALUES(?, ?, ?, ?)";
-        // String sql = "INSERT INTO MEASUREMENTS(id, humidity, moisture, time)
-        // VALUES(?, ?, ?, ?)";
-
         try {
             // Create statement
             PreparedStatement pstatement = database_connection.prepareStatement(sql);
@@ -77,6 +72,50 @@ public class DatabaseHandler {
             pstatement.setString(2, userLogin.username());
             pstatement.setString(3, userLogin.password());
             pstatement.setString(4, userLogin.email());
+
+            pstatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean saveUserData(int id, int correct_reports, int incorrect_reports, int points) {
+        String sql = "INSERT INTO MEASUREMENTS(id, humidity, moisture, time) VALUES(?, ?, ?, ?)";
+
+        try {
+            // Create statement
+            PreparedStatement pstatement = database_connection.prepareStatement(sql);
+
+            // Replace placeholders (questionmarks in sql command). Index starts at 1.
+            pstatement.setLong(1, id);
+            pstatement.setInt(2, correct_reports);
+            pstatement.setInt(3, incorrect_reports);
+            pstatement.setInt(4, points);
+
+            pstatement.executeUpdate();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+        return true;
+    }
+
+    public static boolean saveMeasurements(int id, int humidity, int moisture, int time) {
+        String sql = "INSERT INTO MEASUREMENTS(id, humidity, moisture, time) VALUES(?, ?, ?, ?)";
+
+        try {
+            // Create statement
+            PreparedStatement pstatement = database_connection.prepareStatement(sql);
+
+            // Replace placeholders (questionmarks in sql command). Index starts at 1.
+            pstatement.setLong(1, id);
+            pstatement.setInt(2, humidity);
+            pstatement.setInt(3, moisture);
+            pstatement.setInt(4, time);
 
             pstatement.executeUpdate();
         } catch (Exception e) {
