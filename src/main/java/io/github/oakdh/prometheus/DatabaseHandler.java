@@ -63,6 +63,11 @@ public class DatabaseHandler {
     public static boolean saveUserLogin(UserLogin userLogin) {
         String sql = "INSERT INTO USER_LOGIN(id, username, password, email) VALUES(?, ?, ?, ?)";
 
+        // String sql = "INSERT INTO USER_DATA(id, correct_reports, incorrect_reports,
+        // points) VALUES(?, ?, ?, ?)";
+        // String sql = "INSERT INTO MEASUREMENTS(id, humidity, moisture, time)
+        // VALUES(?, ?, ?, ?)";
+
         try {
             // Create statement
             PreparedStatement pstatement = database_connection.prepareStatement(sql);
