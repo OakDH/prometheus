@@ -61,21 +61,33 @@ public class HTTPHandler {
     {
         boolean should_exit = false;
 
-        if (request.target_path[0].equals("hello_world"))
+        switch (request.target_path[0])
         {
+        case "hello_world":
+            
+            
             outWriter.print(createPacket("Hello from oak!\n"));
-        }
-        else if (request.target_path[0].equals("exit"))
-        {
+
+            break;
+        case "exit":
             outWriter.print(createPacket("Stopping server...\n"));
             should_exit = true;
-        }
-        else
-        {
+
+            break;
+        case "user_login":
+            if (request.target_path.length < 2)
+            {
+                outWriter.print(createPacket(""));
+                break;
+            }
+
+            break;
+        default:
             outWriter.print(createPacket("Could not find command.\n"));
+
+            break;
         }
 
-        
         outWriter.flush();
 
         return should_exit;
