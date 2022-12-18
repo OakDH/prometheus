@@ -43,7 +43,7 @@ public class DatabaseHandler {
                     "\"id\"                 UNSIGNED BIG INT                   NOT NULL," +
                     "\"humidity\"           NUMERIC                            NOT NULL," +
                     "\"moisture\"           NUMERIC                            NOT NULL," +
-                    "\"time\"                UNSIGNED BIG INT                   NOT NULL" +
+                    "\"time\"               UNSIGNED BIG INT                   NOT NULL" +
                     ");");
 
         } catch (Exception e) {
