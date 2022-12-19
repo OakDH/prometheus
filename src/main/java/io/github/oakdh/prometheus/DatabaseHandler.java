@@ -137,7 +137,7 @@ public class DatabaseHandler {
      *         Returns a {@link io.github.oakdh.prometheus.UserLogin#EMPTY} if the
      *         user wasn't found.
      */
-    public static JSONObject getUserLogin(long id) {
+    public static JSONObject getUserLoginById(long id) {
         String sql = "SELECT username, password, email FROM USER_LOGIN WHERE id = ?";
 
         try {
@@ -146,10 +146,14 @@ public class DatabaseHandler {
 
             // Set id in statement
             pstatement.setLong(1, id);
-            pstatement.close();
-            
+
             // Execute statement and save the results
             ResultSet rs = pstatement.executeQuery();
+
+            if (!rs.next())
+            {
+                return new JSONObject().put("id", (long) -1);
+            }
 
             // Return userlogin data collected from the result
             JSONObject json = new JSONObject();
@@ -157,6 +161,42 @@ public class DatabaseHandler {
             json.put("username", rs.getString("username"));
             json.put("password", rs.getString("password"));
             json.put("email", rs.getString("email"));
+
+            pstatement.close();
+
+            return json;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new JSONObject().put("id", (long) -1);
+        }
+    }
+
+    public static JSONObject getUserLoginByUsername(String username) {
+        String sql = "SELECT id, username, password, email FROM USER_LOGIN WHERE username = ?";
+
+        try {
+            // Create statement
+            PreparedStatement pstatement = database_connection.prepareStatement(sql);
+
+            // Set id in statement
+            pstatement.setString(1, username);
+
+            // Execute statement and save the results
+            ResultSet rs = pstatement.executeQuery();
+
+            if (!rs.next())
+            {
+                return new JSONObject().put("id", (long) -1);
+            }
+
+            // Return userlogin data collected from the result
+            JSONObject json = new JSONObject();
+            json.put("id", rs.getLong("id"));
+            json.put("username", rs.getString("username"));
+            json.put("password", rs.getString("password"));
+            json.put("email", rs.getString("email"));
+
+            pstatement.close();
 
             return json;
         } catch (Exception e) {

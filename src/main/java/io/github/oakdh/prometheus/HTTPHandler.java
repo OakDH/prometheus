@@ -14,7 +14,7 @@ public class HTTPHandler {
     
     private HTTPHandler(){} // Make it so that the class isnt instantiatable
 
-    public static String CLIENT_ID_NOT_PROVIDED_FAILURE = createFailurePacket(1, "Client ID wasn't provided.");
+    public static String CLIENT_LOGIN_DATA_NOT_PROVIDED_FAILURE = createFailurePacket(1, "Client login data wasn't provided.");
     public static String CLIENT_ACCOUNT_NOT_FOUND_FAILURE = createFailurePacket(2, "Client account with given ID not found.");
     public static String COMMAND_NOT_FOUND_FAILURE = createFailurePacket(3, "Could not find command.");
 
@@ -79,23 +79,24 @@ public class HTTPHandler {
 
             break;
         case "client_login":
-            if (request.target_path.length < 2)
+            if (request.target_path.length < 3)
             {
-                outWriter.print(createPacket(CLIENT_ID_NOT_PROVIDED_FAILURE));
+                outWriter.print(createPacket(CLIENT_LOGIN_DATA_NOT_PROVIDED_FAILURE));
                 break;
             }
 
-            JSONObject json = DatabaseHandler.getUserLogin(Long.parseLong(request.target_path[1]));
+            JSONObject userLogin = DatabaseHandler.getUserLoginByUsername(request.target_path[1]);
 
-            if (json.getLong("id") == -1)
+            if (userLogin.getLong("id") == -1)
             {
                 outWriter.print(createPacket(CLIENT_ACCOUNT_NOT_FOUND_FAILURE));
                 break;
             }
 
-            json.put("status", 0);
+            JSONObject response = new JSONObject().put("status", 0)
+                .put("login_success", request.target_path[2].equals(userLogin.getString("password")));
 
-            outWriter.print(createPacket(json.toString()));
+            outWriter.print(createPacket(response.toString()));
 
             break;
         default:
@@ -109,7 +110,7 @@ public class HTTPHandler {
         return should_exit;
     }
 
-    public static String createPacket( String payload)
+    public static String createPacket(String payload)
     {
         int messageLength = payload.length();
         
