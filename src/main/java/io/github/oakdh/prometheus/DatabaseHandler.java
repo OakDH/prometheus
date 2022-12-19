@@ -2,6 +2,8 @@ package io.github.oakdh.prometheus;
 
 import java.sql.*;
 
+import org.json.JSONObject;
+
 public class DatabaseHandler {
     public static Connection database_connection;
 
@@ -20,7 +22,7 @@ public class DatabaseHandler {
             Statement statement = database_connection.createStatement();
 
             /* USER-LOGIN */
-
+            
             statement.execute("CREATE TABLE IF NOT EXISTS \"USER_LOGIN\" (" +
                     "\"id\"            BIG INT            NOT NULL," +
                     "\"username\"      TEXT               NOT NULL," +
@@ -60,7 +62,7 @@ public class DatabaseHandler {
      * @param userLogin Login information.
      * @return Whether the save was successful or not.
      */
-    public static boolean saveUserLogin(UserLogin userLogin) {
+    public static boolean saveUserLogin(JSONObject userLogin) {
         String sql = "INSERT INTO USER_LOGIN(id, username, password, email) VALUES(?, ?, ?, ?)";
 
         try {
@@ -68,10 +70,10 @@ public class DatabaseHandler {
             PreparedStatement pstatement = database_connection.prepareStatement(sql);
 
             // Replace placeholders (questionmarks in sql command). Index starts at 1.
-            pstatement.setLong(1, userLogin.id());
-            pstatement.setString(2, userLogin.username());
-            pstatement.setString(3, userLogin.password());
-            pstatement.setString(4, userLogin.email());
+            pstatement.setLong(1, userLogin.getLong("id"));
+            pstatement.setString(2, userLogin.getString("username"));
+            pstatement.setString(3, userLogin.getString("password"));
+            pstatement.setString(4, userLogin.getString("email"));
 
             pstatement.executeUpdate();
         } catch (Exception e) {
@@ -135,7 +137,7 @@ public class DatabaseHandler {
      *         Returns a {@link io.github.oakdh.prometheus.UserLogin#EMPTY} if the
      *         user wasn't found.
      */
-    public static UserLogin getUserLogin(long id) {
+    public static JSONObject getUserLogin(long id) {
         String sql = "SELECT username, password, email FROM USER_LOGIN WHERE id = ?";
 
         try {
@@ -144,15 +146,22 @@ public class DatabaseHandler {
 
             // Set id in statement
             pstatement.setLong(1, id);
-
+            pstatement.close();
+            
             // Execute statement and save the results
             ResultSet rs = pstatement.executeQuery();
 
             // Return userlogin data collected from the result
-            return new UserLogin(id, rs.getString("username"), rs.getString("password"), rs.getString("email"));
+            JSONObject json = new JSONObject();
+            json.put("id", id);
+            json.put("username", rs.getString("username"));
+            json.put("password", rs.getString("password"));
+            json.put("email", rs.getString("email"));
+
+            return json;
         } catch (Exception e) {
             e.printStackTrace();
-            return UserLogin.EMPTY;
+            return new JSONObject().put("id", (long) -1);
         }
     }
 
