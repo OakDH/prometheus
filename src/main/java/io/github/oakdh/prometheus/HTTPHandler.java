@@ -17,6 +17,7 @@ public class HTTPHandler {
     public static String CLIENT_LOGIN_DATA_NOT_PROVIDED_FAILURE = createFailurePacket(1, "Client login data wasn't provided.");
     public static String CLIENT_ACCOUNT_NOT_FOUND_FAILURE = createFailurePacket(2, "Client account with given ID not found.");
     public static String COMMAND_NOT_FOUND_FAILURE = createFailurePacket(3, "Could not find command.");
+    public static String MEASUREMENTS_INCOMPLETE_FAILURE = createFailurePacket(4, "Did not provide enough measurements.");
 
     public static int PORT = 1025;
 
@@ -70,15 +71,20 @@ public class HTTPHandler {
         switch (request.target_path[0])
         {
         case "hello_world":
+        {
             outWriter.print(createPacket(new JSONObject().put("status", 0).put("message", "Hello from Oak!").toString()));
 
             break;
+        }
         case "exit":
+        {
             outWriter.print(createPacket(new JSONObject().put("status", 0).put("message", "Stopping server...").toString()));
             should_exit = true;
 
             break;
+        }
         case "client_login":
+        {
             if (request.target_path.length < 3)
             {
                 outWriter.print(createPacket(CLIENT_LOGIN_DATA_NOT_PROVIDED_FAILURE));
@@ -99,10 +105,43 @@ public class HTTPHandler {
             outWriter.print(createPacket(response.toString()));
 
             break;
+        }
+        case "save_measurements":
+        {
+
+            if (request.target_path.length < 6)
+            {
+                outWriter.print(createPacket(MEASUREMENTS_INCOMPLETE_FAILURE));
+                break;
+            }
+
+            float temperature = Float.parseFloat(request.target_path[1]);
+            float humidity = Float.parseFloat(request.target_path[2]);
+            float soil_moisture = Float.parseFloat(request.target_path[3]);
+            int id = Integer.parseInt(request.target_path[4]);
+            long time = Long.parseLong(request.target_path[5]);
+
+            if (DatabaseHandler.saveMeasurements(id, humidity, temperature, soil_moisture, time))
+            {
+                JSONObject response = new JSONObject().put("status", 0);
+
+                outWriter.print(createPacket(response.toString()));
+            }
+            else
+            {
+                JSONObject response = new JSONObject().put("status", -1);
+
+                outWriter.print(createPacket(response.toString()));
+            }
+
+            break;
+        }
         default:
+        {
             outWriter.print(createPacket(COMMAND_NOT_FOUND_FAILURE));
 
             break;
+        }
         }
 
         outWriter.flush();

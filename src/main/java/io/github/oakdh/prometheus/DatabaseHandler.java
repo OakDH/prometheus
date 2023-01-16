@@ -44,7 +44,8 @@ public class DatabaseHandler {
             statement.execute("CREATE TABLE IF NOT EXISTS \"MEASUREMENTS\" (" +
                     "\"id\"                 UNSIGNED BIG INT                   NOT NULL," +
                     "\"humidity\"           NUMERIC                            NOT NULL," +
-                    "\"moisture\"           NUMERIC                            NOT NULL," +
+                    "\"temperature\"        NUMERIC                            NOT NULL," +
+                    "\"soil_moisture\"      NUMERIC                            NOT NULL," +
                     "\"time\"               UNSIGNED BIG INT                   NOT NULL" +
                     ");");
 
@@ -106,8 +107,8 @@ public class DatabaseHandler {
         return true;
     }
 
-    public static boolean saveMeasurements(int id, int humidity, int moisture, int time) {
-        String sql = "INSERT INTO MEASUREMENTS(id, humidity, moisture, time) VALUES(?, ?, ?, ?)";
+    public static boolean saveMeasurements(long id, float humidity, float temperature, float soil_moisture, long time) {
+        String sql = "INSERT INTO MEASUREMENTS(id, humidity, temperature, soil_moisture, time) VALUES(?, ?, ?, ?, ?)";
 
         try {
             // Create statement
@@ -115,9 +116,10 @@ public class DatabaseHandler {
 
             // Replace placeholders (questionmarks in sql command). Index starts at 1.
             pstatement.setLong(1, id);
-            pstatement.setInt(2, humidity);
-            pstatement.setInt(3, moisture);
-            pstatement.setInt(4, time);
+            pstatement.setFloat(2, humidity);
+            pstatement.setFloat(3, temperature);
+            pstatement.setFloat(4, soil_moisture);
+            pstatement.setLong(5, time);
 
             pstatement.executeUpdate();
         } catch (Exception e) {
