@@ -2,6 +2,7 @@ package io.github.oakdh.prometheus;
 
 import java.sql.*;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class DatabaseHandler {
@@ -128,6 +129,38 @@ public class DatabaseHandler {
         }
 
         return true;
+    }
+
+    public static JSONArray getAllMeasurements()
+    {
+        String sql = "SELECT * FROM MEASUREMENTS";
+
+        try
+        {
+            ResultSet rs = database_connection.createStatement().executeQuery(sql);
+
+            JSONArray arr = new JSONArray();
+
+            while (rs.next())
+            {
+                JSONObject ob = new JSONObject();
+
+                ob.put("id", rs.getInt("id"));
+                ob.put("temperature", rs.getFloat("temperature"));
+                ob.put("humidity", rs.getFloat("humidity"));
+                ob.put("soil_moisture", rs.getFloat("soil_moisture"));
+                ob.put("time", rs.getLong("time"));
+
+                arr.put(ob);
+            }
+
+            return arr;
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+            return new JSONArray();
+        }
     }
 
     /**

@@ -8,6 +8,7 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
 
 public class HTTPHandler {
@@ -70,6 +71,16 @@ public class HTTPHandler {
 
         switch (request.target_path[0])
         {
+        case "get_measurements":
+        {
+            JSONArray arr = DatabaseHandler.getAllMeasurements();
+
+            JSONObject response = new JSONObject();
+            response.put("status", 0);
+            response.put("measurements", arr);
+
+            outWriter.print(createPacket(response.toString()));
+        }
         case "hello_world":
         {
             outWriter.print(createPacket(new JSONObject().put("status", 0).put("message", "Hello from Oak!").toString()));
