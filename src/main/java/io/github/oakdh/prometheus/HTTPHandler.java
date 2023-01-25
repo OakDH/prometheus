@@ -76,8 +76,16 @@ public class HTTPHandler {
             JSONArray arr = DatabaseHandler.getAllMeasurements();
 
             JSONObject response = new JSONObject();
-            response.put("status", 0);
-            response.put("measurements", arr);
+
+            if (arr == null)
+            {
+                response.put("status", -1);
+            }
+            else
+            {
+                response.put("status", 0);
+                response.put("measurements", arr);
+            }
 
             outWriter.print(createPacket(response.toString()));
         }

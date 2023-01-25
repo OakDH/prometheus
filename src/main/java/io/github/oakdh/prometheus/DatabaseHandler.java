@@ -159,7 +159,7 @@ public class DatabaseHandler {
         catch (Exception e)
         {
             e.printStackTrace();
-            return new JSONArray();
+            return null;
         }
     }
 
